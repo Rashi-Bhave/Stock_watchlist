@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<body>
+  <nav id="navigation" class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#share_detail-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="share_detail-collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <a class="navbar-brand" href="{% url 'home' %}">EasyStocks</a>
+        </ul>
+        <ul class="nav navbar-nav navbar-center">
+          <li>
+            <a href="#company">Indicators</a>
+          </li>
+          <li>
+            <a href="#news">news</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="text-center" id="share-name">
+    <div class="container">
+      {% block share_name %}
+        <h2>{{ share.title }}</h2>
+      {% endblock share_name %}
+    </div>
+  </div>
+  <div class="text-center">
+    <div class="container">
+      <div class="row">
+        {% block datachart %}
+          <canvas id="line-chart"></canvas>
+          <script>
+            var chart = new Chart(document.getElementById("line-chart"), {
+              type: 'line',
+              data: {
+                labels: [{% for date in dates %}"{{ date }}",{% endfor %}],
+                datasets: [{ 
+                    data: [{% for data in chart_data %}{{ data.close_price }},{% endfor %}],
+                    borderColor: "#3e95cd",
+                    fill: true
+                  },
+                ]
+              },
+              options: {
+                legend: {
+                    display: false
+                },
+                scales: {
+                  xAxes: [{
+                    type: 'time',
+                    time: {
+                      displayFormats: {
+                        'millisecond': 'MMM DD',
+                        'second': 'MMM DD',
+                        'minute': 'MMM DD',
+                        'hour': 'MMM DD',
+                        'day': 'MMM DD',
+                        'week': 'MMM DD',
+                        'month': 'MMM DD',
+                        'quarter': 'MMM DD',
+                        'year': 'MMM DD',
+                      }
+                    }
+                  }],
+                },
+              }
+            });
+          </script>
+        {% endblock datachart %}
+      </div>
+    </div>
+  </div>
+  <div id="about">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a data-toggle="tab" href="#about_text">О компании</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#competitors">Competitors</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#dividends">Dividends</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#reports">Reporting</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane text-center active" id="about_text">
+              {% block about_block %}
+                <p>{{ share.text }}</p>
+              {% endblock about_block %}
+            </div>
+            <div class="tab-pane text-center" id="competitors">
+              {% block competitors %}
+                {% for competitor in competitors %}
+                  <a href="{% url 'share_detail' competitor.pk %}">
+                    <p>{{ competitor.title }}</p>
+                  </a>
+                {% endfor %}
+              {% endblock competitors %}
+            </div>
+            <div class="tab-pane text-center" id="dividends"></div>
+            <div class="tab-pane text-center" id="reports"></div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          {% if user.is_authenticated %}
+          <form action="{% url 'add_share' user.id share.id %}" method="post" id="add_share_button">
+            {% csrf_token %}
+            <div id="button-center">
+              <div class="btn-group">
+                <button type="submit" class="btn btn-default btn-lg" aria-haspopup="true" aria-expanded="false">Add</button>
+              </div>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="company">
+    <div class="container">
+      <div class="text-center">
+        <h2>Indicators</h2>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          {% block products_details %}
+            <canvas id="doughnut-chart-products"></canvas>
+            <script>
+              var data = {
+                  datasets: [{
+                      data: {{ products_values }},
+                      backgroundColor: poolColors({{ products_values | length }}),
+                  }],
+                    labels: {{ products_names | safe }},
+              };
+              var options = {
+                responsive: true,
+                legend: {
+                  display: false,
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Products (profit in millions {{ currency_symbol }})',
+                },
+                animation: {
+                  animateScale: true,
+                  animateRotate: true
+                }
+              }
+              var myDoughnutChart = new Chart(document.getElementById("doughnut-chart-products"), {
+                  type: 'doughnut',
+                  data: data,
+                  options: options
+              });
+            </script>
+          {% endblock products_details %}
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          {% block customer_details %}
+            <canvas id="pie-chart-cutomers"></canvas>
+            <script>
+              var data = {
+                  datasets: [{
+                      data: {{ customer_percentage }},
+                      backgroundColor: poolColors({{ customer_percentage | length }}),
+                  }],
+                    labels: {{ customer_locations | safe }},
+              };
+              var options = {
+                responsive: true,
+                legend: {
+                  display: false,
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Buyers (location)',
+                },
+                animation: {
+                  animateScale: true,
+                  animateRotate: true
+                }
+              }
+              var myDoughnutChart = new Chart(document.getElementById("pie-chart-cutomers"), {
+                  type: 'pie',
+                  data: data,
+                  options: options
+              });
+            </script>
+          {% endblock customer_details %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          {% block company_earnings %}
+            <canvas id="bar-chart-income"></canvas>
+              <script>
+                var data = {
+                  datasets: [
+                    {
+                      data: {{ earnings }},
+                      label: 'Earnings',
+                      backgroundColor: "#5FD3B3",
+                    },
+                    {
+                      data: {{ revenue }},
+                      label: 'Revenue',
+                      backgroundColor: "#006D4F",
+                    }
+                  ],
+                  labels: {{ indicators_years | safe }}
+                }
+                var options = {
+                  responsive: true,
+                  legend: {
+                    display: true,
+                    position: 'bottom',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Profit and Revenue in millions {{ currency_symbol }}',
+                  },
+                  animation: {
+                    animateScale: true,
+                    animateRotate: true
+                  }
+                }
+                var myDoughnutChart = new Chart(document.getElementById("bar-chart-income"), {
+                    type: 'bar',
+                    data: data,
+                    options: options
+                });
+              </script>
+          {% endblock company_earnings %}
+      </div>
+    </div>
+  </div>
+  <div id="news" class="container" >
+    <div class="text-center">
+      <h2>Новости</h2>
+    </div>
+    <div class="container">
+      {% block newsblock %}
+        <div class="row">
+          {% for article in news|slice:":3" %}
+              <div class="col-xs-12 col-sm-6 col-md-4">
+                {% if user.is_staff %}
+                  <form action="{% url 'delete_article' share.id article.id %}" method="post" id="remove-article">
+                    {% csrf_token %}
+                    <button type="submit" class="close" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </form>
+                {% endif %}
+                <a href="{{ article.url }}">
+                  <div class="item">
+                    <h3 class="text-center">{{ article.title }}</h3>
+                    <img src="{{ article.url_to_image }}" class="img-responsive center-block">
+                    <br/>
+                    <p>{{ article.description }}</p>
+                  </div>
+                </a>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+        <div class="row">
+          {% for article in news|slice:"3:6" %}
+            <div class="col-xs-12 col-sm-6 col-md-4">
+              {% if user.is_staff %}
+                <form action="{% url 'delete_article' share.id article.id %}" method="post" id="remove-article">
+                  {% csrf_token %}
+                  <button type="submit" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </form>
+              {% endif %}
+              <a href="{{ article.url }}">
+                <div class="item">
+                  <h3 class="text-center">{{ article.title }}</h3>
+                  <img src="{{ article.url_to_image }}" class="img-responsive center-block">
+                  <br/>
+                  <p>{{ article.description }}</p>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      {% endblock newsblock %}
+    </div>
+  </div>
+  <div id="footer">
+    <div class="container text-center">
+      <div class="col-xs-12">
+        <p>News provider <a href="https://newsapi.org/">News API</a>
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock content %}

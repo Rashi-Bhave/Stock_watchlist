@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EasyStocks</title>
+  <meta name="description" content="Сервис для начинающих инвесторов">
+  <meta name="author" content="Ivan Abramov">
+  <!-- Favicons -->
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" type="text/css"  href="{% static 'css/bootstrap.css' %}">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome/css/font-awesome.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/owl.theme.default.min.css' %}">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+  <!-- Yandex.Metrika counter -->
+  <meta name="yandex-verification" content="4b8c05dffb8c79db" />
+  <script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(53274031, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/53274031" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+  <!-- Google -->
+  <meta name="google-site-verification" content="-ppnG-4W_XI-BeCO8A3X1h0gHNriVbMAb2YTDsOhfHY" />
+  <!-- /Google-->
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="navigation" class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#home-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="home-collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <a class="navbar-brand" href="{% url 'home' %}">EasyStocks</a>
+        </ul>
+        {% if not user.is_authenticated %}
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="{% url 'login' %}">Login</a>
+          </li>
+          <li>
+            <a href="{% url 'signup' %}">Register</a>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="{% url 'personal' user.pk %}">Watchlist</a>
+          </li>
+          <li>
+            <a href="{% url 'logout' %}">Log out</a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  <!-- Header -->
+  <header id="header">
+    <div class="intro">
+      <div class="overlay">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="intro-text">
+                <h1>EasyStocks</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- About -->
+  <div id="about">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="about-text">
+            <h3 class="text-center">Service for investors</h3>
+            <p class="text-center">We will help you form an investment portfolio <br> Recall about important events in the stock and currency markets </p>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="about-text">
+            <h3 class="text-center">Statistics</h3>
+            {% block statistics %}
+              <p class="text-center">
+                Number of shares: {{ share_list|length }} <br> 
+                Number of currency pairs: {{ currency_list|length }} <br>
+              </p>
+            {% endblock statistics %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Stocks -->
+  <div id="stocks" class="text-center">
+    <div class="container">
+      <div class="section-title">
+        <h2>Stocks USA</h2>
+      </div>
+      <div class="container">
+        {% block content %}
+          <div class="row">
+            <div id="tech-usa-stock-carousel" class="owl-carousel owl-theme">
+              {% for share in tech_usa %}
+                <a href="{% url 'share_detail' share.pk %}">
+                  <div class="chart">
+                    <h3 class="text-center">{{ share.title }}</h3>
+                    <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+            <div class="row">
+              <div id="non-tech-usa-stock-carousel" class="owl-carousel owl-theme">
+                {% for share in non_tech_usa %}
+                  <a href="{% url 'share_detail' share.pk %}">
+                    <div class="chart">
+                      <h3 class="text-center">{{ share.title }}</h3>
+                      <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
+                    </div>
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endblock content %}
+    </div>
+  </div>
+  <!-- Stocks Russia -->
+  <div id="stocks" class="text-center">
+    <div class="container">
+      <div class="section-title">
+        <h2>Stock Russia</h2>
+      </div>
+      <div class="container">
+        {% block content_rus %}
+          <div clas="row">
+            <div id="non-materials-rus-stock-carousel" class="owl-carousel owl-theme">
+              {% for share in non_materials_rus %}
+                <a href="{% url 'share_detail' share.pk %}">
+                  <div class="chart">
+                    <h3 class="text-center">{{ share.title }}</h3>
+                    <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="row">
+            <div id="materials-rus-stock-carousel" class="owl-carousel owl-theme">
+              {% for share in materials_rus %}
+                <a href="{% url 'share_detail' share.pk %}">
+                  <div class="chart">
+                    <h3 class="text-center">{{ share.title }}</h3>
+                    <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endblock content_rus %}
+    </div>
+  </div>
+  <div id="dividends" class="text-center">
+    <div class="container">
+      <div class="section-title">
+        <h2>Dividends</h2>
+      </div>
+      <div class="row">
+        <div id="div-carousel" class="owl-carousel owl-theme">
+        {% for dividend in dividends %}
+          <div class="item">
+            <h3 class="text-center">{{ dividend.share }}</h3>
+            <h4>{{ dividend.amount }} {{ dividend.currency.symbol|safe }}</h4>
+            <h5>{{ dividend.date }}</h5>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- FX -->
+  <div id="fx" class="text-center">
+    <div class="container">
+      <div class="section-title">
+        <h2>FX</h2>
+      </div>
+      <div class="row">
+        <div id="currency-carousel" class="owl-carousel owl-theme">
+        {% for fx_item in currency_list %}
+          <div class="item">
+            <h3 class="text-center">{{ fx_item.title }}</h3>
+            <img src="{% get_static_prefix %}img/currency/{{ fx_item.ticker }}.png" class="img-responsive" alt="">
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Overall -->
+  <div id="overall" class="text-center">
+    <div class="container">
+      <div class="section-title">
+        <h2>Results</h2>
+      </div>
+      <div class="row">
+        <div id="pie-results-carousel" class="owl-carousel owl-theme">
+          <div>
+            {% block trends_chart_usa %}
+              <canvas id="doughnut-chart-usa"></canvas>
+              <script>
+                var data = {
+                    datasets: [{
+                        data: {{ share_usa_trends }},
+                        backgroundColor: [
+                          "#32CD32",
+                          "#FF4500",
+                        ],
+                    }],
+                    labels: [
+                        'Height',
+                        'A fall'
+                    ]
+                };
+                var options = {
+                  responsive: true,
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Results of the week of promotions 🇺🇸',
+                  },
+                  animation: {
+                    animateScale: true,
+                    animateRotate: true
+                  }
+                }
+                var myDoughnutChart = new Chart(document.getElementById("doughnut-chart-usa"), {
+                    type: 'doughnut',
+                    data: data,
+                    options: options
+                });
+              </script>
+            {% endblock trends_chart_usa %}
+          </div>
+          <div>
+            {% block trends_chart_rus %}
+              <canvas id="doughnut-chart-rus"></canvas>
+              <script>
+                var data = {
+                    datasets: [{
+                        data: {{ share_rus_trends }},
+                        backgroundColor: [
+                          "#32CD32",
+                          "#FF4500",
+                        ],
+                    }],
+                    labels: [
+                        'Height',
+                        'A fall'
+                    ]
+                };
+                var options = {
+                  responsive: true,
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Results of the week of promotions Ru',
+                  },
+                  animation: {
+                    animateScale: true,
+                    animateRotate: true
+                  }
+                }
+                var myDoughnutChart = new Chart(document.getElementById("doughnut-chart-rus"), {
+                    type: 'doughnut',
+                    data: data,
+                    options: options
+                });
+              </script>
+            {% endblock trends_chart_rus %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <div id="footer">
+    <div class="container text-center">
+      <div class="col-xs-12">
+      </div>
+    </div>
+  </div>
+</body>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+</html>

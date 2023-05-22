@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<body>
+  <nav id="navigation" class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#share_detail-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="share_detail-collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <a class="navbar-brand" href="{% url 'home' %}">EasyStocks</a>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="{% url 'logout' %}">Log out</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="text-center" id="personal-sections">
+    <div class="container">
+      <h2>Watchlist</h2>
+      <!-- <div class="row center">
+        <div class="box">
+          <div class="card col-xs-12 col-sm-6 col-md-4">
+            <div class="imgBx">
+              <img src="{% static 'img/portfolio-small.jpg' %}" class="img-responsive">
+            </div>
+            <div class="details">
+              <h2>Briefcase</h2>
+            </div>
+          </div>
+          <div class="card col-xs-12 col-sm-6 col-md-4">
+            <div class="imgBx">
+              <img src="{% static 'img/trade-small.jpg' %}" class="img-responsive">
+            </div>
+            <div class="details">
+              <h2>Deals</h2>
+            </div>
+          </div>
+          <div class="card col-xs-12 col-sm-6 col-md-4">
+            <div class="imgBx">
+              <img src="{% static 'img/dividends.jpeg' %}" class="img-responsive">
+            </div>
+            <div class="details">
+              <h2>Dividends</h2>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center" id="personal-portfolio">
+    <div class="container">
+      <style>
+        .table {
+          border-collapse: collapse;
+          width: 100%;
+          margin-top: 50px
+        }
+        th,
+        td {
+          text-align: left;
+          padding: 8px;
+          border-bottom: 1px solid #ddd;
+        }
+        th {
+          border-right: 1px solid #ddd;
+        }
+        td:last-child {
+          border-right: none;
+        }
+      </style>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Ticker</th>
+            <th scope="col">Name</th>
+            <th scope="col">Side</th>
+            <th scope="col">Sector</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% block personal_deals %}
+          {% for share in portfolio_shares %}
+          <tr>
+            <td>{{ share.ticker }}</td>
+            <td>{{ share.title }}</td>
+            <td>{{ share.countryCode }}</td>
+            <td>{{ share.sector }}</td>
+          </tr>
+          {% endfor %}
+          {% endblock personal_deals %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+{% endblock content %}

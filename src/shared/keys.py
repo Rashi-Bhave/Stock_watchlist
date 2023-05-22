@@ -1,0 +1,6 @@
+ALPHA_DOWNLOAD_KEY = ''
+PLOTLY_KEY = ''
+NEWS_API_KEY = ''
+WORLD_TRADING_DATA_KEY = ''
+MARKETSTACK_API_KEY = ''
+DJANGO_KEY = 'i1ta@p%tepv9f+llz1pbpz1-%v5%pzp57s+ac=ch$iu%+@4uar'

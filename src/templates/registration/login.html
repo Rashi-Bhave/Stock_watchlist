@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<body>
+  <nav id="navigation" class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#share_detail-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="share_detail-collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <a class="navbar-brand" href="{% url 'home' %}">EasyStocks</a>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="text-center">
+    <h2>Login</h2>
+    <style>
+      .custom-container {
+        max-width: 250px; /* Adjust the width as per your preference */
+        margin: 0 auto;
+      }
+    
+      .custom-container form .form-control {
+        max-width: 100%;
+      }
+    </style>
+    <div class="custom-container">
+      <form method="post" id="login-form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-success ml-2" type="submit">Login</button>
+      </form>
+    </div>    
+    </div>
+  </div>
+</body>
+{% endblock content %}
