@@ -96,232 +96,72 @@
     </div>
   </header>
   <!-- About -->
-  <div id="about">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-6">
-          <div class="about-text">
-            <h3 class="text-center">Service for investors</h3>
-            <p class="text-center">We will help you form an investment portfolio <br> Recall about important events in the stock and currency markets </p>
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-6">
-          <div class="about-text">
-            <h3 class="text-center">Statistics</h3>
-            {% block statistics %}
-              <p class="text-center">
-                Number of shares: {{ share_list|length }} <br> 
-                Number of currency pairs: {{ currency_list|length }} <br>
-              </p>
-            {% endblock statistics %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Stocks -->
-  <div id="stocks" class="text-center">
-    <div class="container">
-      <div class="section-title">
-        <h2>Stocks USA</h2>
-      </div>
-      <div class="container">
-        {% block content %}
-          <div class="row">
-            <div id="tech-usa-stock-carousel" class="owl-carousel owl-theme">
-              {% for share in tech_usa %}
-                <a href="{% url 'share_detail' share.pk %}">
-                  <div class="chart">
-                    <h3 class="text-center">{{ share.title }}</h3>
-                    <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
-                  </div>
-                </a>
-              {% endfor %}
-            </div>
-            <div class="row">
-              <div id="non-tech-usa-stock-carousel" class="owl-carousel owl-theme">
-                {% for share in non_tech_usa %}
-                  <a href="{% url 'share_detail' share.pk %}">
-                    <div class="chart">
-                      <h3 class="text-center">{{ share.title }}</h3>
-                      <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
-                    </div>
-                  </a>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        {% endblock content %}
-    </div>
-  </div>
-  <!-- Stocks Russia -->
-  <div id="stocks" class="text-center">
-    <div class="container">
-      <div class="section-title">
-        <h2>Stock Russia</h2>
-      </div>
-      <div class="container">
-        {% block content_rus %}
-          <div clas="row">
-            <div id="non-materials-rus-stock-carousel" class="owl-carousel owl-theme">
-              {% for share in non_materials_rus %}
-                <a href="{% url 'share_detail' share.pk %}">
-                  <div class="chart">
-                    <h3 class="text-center">{{ share.title }}</h3>
-                    <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
-                  </div>
-                </a>
-              {% endfor %}
-            </div>
-          </div>
-          <div class="row">
-            <div id="materials-rus-stock-carousel" class="owl-carousel owl-theme">
-              {% for share in materials_rus %}
-                <a href="{% url 'share_detail' share.pk %}">
-                  <div class="chart">
-                    <h3 class="text-center">{{ share.title }}</h3>
-                    <img src="{% get_static_prefix %}img/stocks/{{ share.ticker }}.png" class="img-responsive" alt="">
-                  </div>
-                </a>
-              {% endfor %}
-            </div>
-          </div>
-        {% endblock content_rus %}
-    </div>
-  </div>
-  <div id="dividends" class="text-center">
-    <div class="container">
-      <div class="section-title">
-        <h2>Dividends</h2>
-      </div>
-      <div class="row">
-        <div id="div-carousel" class="owl-carousel owl-theme">
-        {% for dividend in dividends %}
-          <div class="item">
-            <h3 class="text-center">{{ dividend.share }}</h3>
-            <h4>{{ dividend.amount }} {{ dividend.currency.symbol|safe }}</h4>
-            <h5>{{ dividend.date }}</h5>
-          </div>
-        {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- FX -->
-  <div id="fx" class="text-center">
-    <div class="container">
-      <div class="section-title">
-        <h2>FX</h2>
-      </div>
-      <div class="row">
-        <div id="currency-carousel" class="owl-carousel owl-theme">
-        {% for fx_item in currency_list %}
-          <div class="item">
-            <h3 class="text-center">{{ fx_item.title }}</h3>
-            <img src="{% get_static_prefix %}img/currency/{{ fx_item.ticker }}.png" class="img-responsive" alt="">
-          </div>
-        {% endfor %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Overall -->
-  <div id="overall" class="text-center">
-    <div class="container">
-      <div class="section-title">
-        <h2>Results</h2>
-      </div>
-      <div class="row">
-        <div id="pie-results-carousel" class="owl-carousel owl-theme">
-          <div>
-            {% block trends_chart_usa %}
-              <canvas id="doughnut-chart-usa"></canvas>
-              <script>
-                var data = {
-                    datasets: [{
-                        data: {{ share_usa_trends }},
-                        backgroundColor: [
-                          "#32CD32",
-                          "#FF4500",
-                        ],
-                    }],
-                    labels: [
-                        'Height',
-                        'A fall'
-                    ]
-                };
-                var options = {
-                  responsive: true,
-                  legend: {
-                    position: 'top',
-                  },
-                  title: {
-                    display: true,
-                    text: 'Results of the week of promotions 🇺🇸',
-                  },
-                  animation: {
-                    animateScale: true,
-                    animateRotate: true
-                  }
-                }
-                var myDoughnutChart = new Chart(document.getElementById("doughnut-chart-usa"), {
-                    type: 'doughnut',
-                    data: data,
-                    options: options
-                });
-              </script>
-            {% endblock trends_chart_usa %}
-          </div>
-          <div>
-            {% block trends_chart_rus %}
-              <canvas id="doughnut-chart-rus"></canvas>
-              <script>
-                var data = {
-                    datasets: [{
-                        data: {{ share_rus_trends }},
-                        backgroundColor: [
-                          "#32CD32",
-                          "#FF4500",
-                        ],
-                    }],
-                    labels: [
-                        'Height',
-                        'A fall'
-                    ]
-                };
-                var options = {
-                  responsive: true,
-                  legend: {
-                    position: 'top',
-                  },
-                  title: {
-                    display: true,
-                    text: 'Results of the week of promotions Ru',
-                  },
-                  animation: {
-                    animateScale: true,
-                    animateRotate: true
-                  }
-                }
-                var myDoughnutChart = new Chart(document.getElementById("doughnut-chart-rus"), {
-                    type: 'doughnut',
-                    data: data,
-                    options: options
-                });
-              </script>
-            {% endblock trends_chart_rus %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Footer -->
-  <div id="footer">
-    <div class="container text-center">
-      <div class="col-xs-12">
-      </div>
-    </div>
-  </div>
+  <input type="text" id="searchInput" placeholder="Search..." />
+  <div id="autocompleteDropdown"></div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Input field and dropdown menu references
+      const searchInput = $('#searchInput');
+      const autocompleteDropdown = $('#autocompleteDropdown');
+  
+      // Event listener for input changes
+      searchInput.on('input', function() {
+        const keywords = $(this).val();
+        const apiKey = 'your_api_key'; // Replace with your actual API key
+  
+        // Clear dropdown menu if search term is empty
+        if (keywords === '') {
+          autocompleteDropdown.empty();
+          return;
+        }
+  
+        // Make AJAX request to the search endpoint
+        $.ajax({
+          url: `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${keywords}&apikey=${apiKey}`,
+          method: 'GET',
+          success: function(data) {
+            // Extract symbol options from the response
+            const symbolOptions = data['bestMatches'].map(match => match['1. symbol']);
+  
+            // Update the dropdown menu
+            autocompleteDropdown.empty();
+            symbolOptions.forEach(symbol => {
+              const optionElement = $('<div></div>').text(symbol);
+              const plusButton = $('<button>+</button>').click(function() {
+                addSymbolToWatchlist(symbol);
+              });
+              optionElement.append(plusButton);
+              autocompleteDropdown.append(optionElement);
+            });
+          },
+          error: function() {
+            console.log('Error occurred while fetching symbol suggestions.');
+          }
+        });
+      });
+  
+      // Function to add the selected symbol to the user's watchlist
+      function addSymbolToWatchlist(symbol) {
+        const personId = '{{ object.id }}'; // Replace with the appropriate template tag for the person ID
+        const shareId = '{{ share.id }}'; // Replace with the appropriate template tag for the share ID
+  
+        // Make AJAX request to add_share endpoint
+        $.ajax({
+          url: `/add_share/${personId}/${shareId}/`,
+          method: 'POST',
+          success: function() {
+            console.log('Symbol added to watchlist successfully.');
+            // Perform any additional actions after adding the symbol
+          },
+          error: function() {
+            console.log('Error occurred while adding symbol to watchlist.');
+          }
+        });
+      }
+    });
+  </script>
+  
 </body>
 <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
